@@ -1,0 +1,21 @@
+---
+# tasks file for elastic-installer
+
+# Install the elastic repos and base OS updates
+- name: "{{ ansible_os_family }} Install"
+  tags: [ 'ps::install' ]
+  include: "{{ ansible_os_family }}.yml"
+  when: ansible_os_family | default('') != ''
+
+- name: Install elastic bundle {{ elastic_bundle }}
+  tags: [ 'ps::install' ]
+  package:
+    name: "{{ elastic_bundle }}"
+    state: latest
+
+- name: Install elastic additional packages
+  tags: [ 'ps::install' ]
+  package:
+    name: "{{ item }}"
+    state: latest
+  with_items: "{{ elastic_optional_packages | default([]) }}"

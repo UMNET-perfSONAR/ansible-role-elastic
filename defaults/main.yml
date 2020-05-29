@@ -1,0 +1,29 @@
+---
+# defaults file for elastic-installer
+
+#####
+# This role is meant to be inherited by other perfSONAR roles in order to
+# automate a standardized method for software installation.
+
+# The OS packages are updated (yum or apt) prior to install perfSONAR packages.
+# This is recommended as an outdated OS might contain security vulnerabilities.
+#
+#elastic_os_update: True
+#elastic_os_update: False
+#
+elastic_os_update: True
+
+# perfSONAR bundle to install
+# Refer to the list of all perfSONAR bundles at
+# http://docs.elastic.net/install_options.html
+#
+# This variable is meant to be set by other roles that depend on this one
+#
+# elastic_bundle: elastic-testpoint
+# elastic_bundle: elastic-toolkit
+# elastic_bundle: elastic-psconfig-publisher
+#
+# elastic_bundle: []
+
+# optional packages
+# elastic_optional_packages: []
