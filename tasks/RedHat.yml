@@ -10,11 +10,11 @@
     state: present
 
 # Make sure we have the latest upgrades installed
-- name: (RedHat) Install system updates
-  tags: [ 'elastic::install' ]
-  yum:
-    name: '*'
-    state: latest
-    update_cache: yes
-  ignore_errors: True
-  when: ( elastic_os_update | default('false')) == True
+#- name: (RedHat) Install system updates
+#  tags: [ 'elastic::install' ]
+#  yum:
+#    name: '*'
+#    state: latest
+#    update_cache: yes
+#  ignore_errors: True
+#  when: ( elastic_os_update | default('false')) == True
