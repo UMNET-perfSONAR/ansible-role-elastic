@@ -59,7 +59,6 @@
       - java-11-openjdk
     state: present
 
-
 - name: newer java for logstash
   get_url:
     url: https://raw.githubusercontent.com/perfsonar/archiving-sandbox/master/toolkit/files/java.sh
@@ -69,16 +68,16 @@
   shell: source /etc/profile.d/java.sh
 
 - name: java 11 setup
-  shell: JAVA_HOME=/usr/lib/jvm/jre-11 yum install -y logstash
+  shell: "JAVA_HOME=/usr/lib/jvm/jre-11 yum install -y logstash"
 
 - name: copying
-  copy:
-    content: "JAVA_HOME=/usr/share/elasticsearch/jdk"
+  lineinfile:
+    line: "JAVA_HOME=/usr/share/elasticsearch/jdk"
     dest: /etc/sysconfig/logstash
 
 - name: reload daemon
   systemd:
-    daemon_reexec: yes
+    daemon_reload: yes
 
 - name: start rabbitmq
   systemd:
@@ -95,7 +94,6 @@
   systemd:
     enabled: yes
     name: elasticsearch.service
-    state: started
 
 - name: create dir
   file:
@@ -118,8 +116,6 @@
 - name: run secure script
   shell: /usr/lib/perfsonar/scripts/pselastic_secure.sh
 
-#XXX add chmodes to .py files and the script itself
-
 - name: add user
   rabbitmq_user:
     user: elastic
@@ -130,18 +126,16 @@
     write_priv: .*
     state: present
 
-
 - name: copy logstash
   copy:
-    src: "{{item}}"
+    src: logstash_pipeline/
     dest: /etc/logstash/conf.d/
-  with_fileglob:
-    - logstash_pipeline/*
+    force: yes
 
 - name: more logstash
   get_url:
     url: https://raw.githubusercontent.com/perfsonar/archiving-sandbox/master/toolkit/files/99-outputs.conf
-    dest: /etc/logstash/conf.d/99-outputs.conf
+    dest: /etc/logstash/conf.d/
     force: yes
 
 - name: create a link
@@ -152,7 +146,6 @@
 
 - name: enable logstash
   systemd:
-    enabled: yes
     name: logstash.service
     state: started
 
@@ -195,6 +188,7 @@
 - name: Set Password
   set_fact:
     your_password: "{{ p['content'] | b64decode | regex_findall('elastic = (.*)')| first }}"
+
 - name: input password
   lineinfile:
     path: /etc/kibana/kibana.yml
@@ -216,9 +210,9 @@
 - name: reload elasticsearch
   systemd:
     name: elasticsearch.service
-    state: reloaded
+    state: restarted
 
 - name: reload kibana
   systemd:
     name: kibana.service
-    state: reloaded
+    state: restarted
