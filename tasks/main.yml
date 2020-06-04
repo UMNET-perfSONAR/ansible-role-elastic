@@ -71,9 +71,14 @@
   shell: "JAVA_HOME=/usr/lib/jvm/jre-11 yum install -y logstash"
 
 - name: copying
-  lineinfile:
-    line: "JAVA_HOME=/usr/share/elasticsearch/jdk"
+  copy:
+    content: "JAVA_HOME=/usr/share/elasticsearch/jdk"
     dest: /etc/sysconfig/logstash
+
+#- name: copying
+ # lineinfile:
+  #  line: "JAVA_HOME=/usr/share/elasticsearch/jdk"
+   # dest: /etc/sysconfig/logstash
 
 - name: reload daemon
   systemd:
