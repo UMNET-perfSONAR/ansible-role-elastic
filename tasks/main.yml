@@ -70,15 +70,15 @@
 - name: java 11 setup
   shell: "JAVA_HOME=/usr/lib/jvm/jre-11 yum install -y logstash"
 
-- name: copying
-  copy:
-    content: "JAVA_HOME=/usr/share/elasticsearch/jdk"
-    dest: /etc/sysconfig/logstash
-
 #- name: copying
- # lineinfile:
-  #  line: "JAVA_HOME=/usr/share/elasticsearch/jdk"
+ # copy:
+  #  content: "JAVA_HOME=/usr/share/elasticsearch/jdk"
    # dest: /etc/sysconfig/logstash
+
+- name: copying
+  lineinfile:
+    line: JAVA_HOME=/usr/share/elasticsearch/jdk
+    path: /etc/sysconfig/logstash
 
 - name: reload daemon
   systemd:
@@ -99,6 +99,7 @@
   systemd:
     enabled: yes
     name: elasticsearch.service
+    state: started
 
 - name: create dir
   file:
