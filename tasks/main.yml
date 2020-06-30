@@ -52,7 +52,7 @@
       - make
       - bzip2
       - python-psutil
-      = python-pika
+      - python-pika
       - python3
       - python3-requests
       - elasticsearch
