@@ -51,6 +51,8 @@
       - dkms
       - make
       - bzip2
+      - python-pika
+      - python-psutil
       - python3
       - python3-requests
       - elasticsearch
@@ -75,10 +77,13 @@
   #  content: "JAVA_HOME=/usr/share/elasticsearch/jdk"
    # dest: /etc/sysconfig/logstash
 
-- name: copying
-  lineinfile:
-    line: JAVA_HOME=/usr/share/elasticsearch/jdk
-    path: /etc/sysconfig/logstash
+#- name: copying
+#  lineinfile:
+#    line: JAVA_HOME=/usr/share/elasticsearch/jdk
+#    path: /etc/sysconfig/logstash
+
+- name: copying 
+  shell: "echo \"JAVA+HOME=/usr/share/elasticsearch/jdk\" >> /etc/sysconfig/logstash"
 
 - name: reload daemon
   systemd:
