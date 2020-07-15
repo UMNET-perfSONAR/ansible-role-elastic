@@ -42,24 +42,108 @@
   args:
     warn: no
 
-- name: install package
+- name: install gcc
   yum:
+    state: present
     name:
       - gcc
-      - kernel-devel
-      - kernel-headers
-      - dkms
-      - make
-      - bzip2
-      - python-pika
-      - python-psutil
-      - python3
-      - python3-requests
-      - elasticsearch
-      - erlang
-      - rabbitmq-server
-      - java-11-openjdk
+
+- name: install kernel-devel
+  yum:
     state: present
+    name:
+      - kernel-devel
+
+- name: install kernel-headers
+  yum:
+    state: present
+    name:
+      - kernel-headers
+
+- name: install dkms
+  yum:
+    state: present
+    name:
+      - dkms
+
+- name: install make
+  yum:
+    state: present
+    name:
+      - make
+
+- name: install bzip2
+  yum:
+    state: present
+    name:
+      - bzip2
+
+- name: install python-pika
+  yum:
+    state: present
+    name:
+      - python-pika
+
+- name: install python-psutil
+  yum:
+    state: present
+    name:
+      - python-psutil
+
+- name: install python3
+  yum:
+    state: present
+    name:
+      - python3
+
+- name: install python3-requests
+  yum:
+    state: present
+    name:
+      - python3-requests
+
+- name: install elasticsearch
+  yum:
+    state: present
+    name:
+      - elasticsearch
+
+- name: install erlang
+  yum:
+    state: present
+    name:
+      - erlang
+
+- name: install rabbitmq-server
+  yum:
+    state: present
+    name:
+      - rabbitmq-server
+
+- name: install java-11-openjdk
+  yum:
+    state: present
+    name:
+      - java-11-openjdk
+
+#- name: install package
+#  yum:
+#    state: present
+#    name:
+#      - gcc
+#      - kernel-devel
+#      - kernel-headers
+#      - dkms
+#      - make
+#      - bzip2
+#      - python-pika
+#      - python-psutil
+#      - python3
+#      - python3-requests
+#      - elasticsearch
+#      - erlang
+#      - rabbitmq-server
+#      - java-11-openjdk
 
 - name: newer java for logstash
   get_url:
