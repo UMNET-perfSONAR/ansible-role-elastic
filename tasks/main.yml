@@ -16,10 +16,20 @@
   reboot:
   when: sel.changed
 
+- name: remove erlang
+  yum:
+    name: erlang*
+    state: absent
+
 - name: download erlang
   yum:
-   name: http://packages.erlang-solutions.com/erlang-solutions-1.0-1.noarch.rpm
-   state: present
+    name:  https://github.com/rabbitmq/erlang-rpm/releases/download/v22.3.4.2/erlang-22.3.4.2-1.el7.x86_64.rpm 
+    state: present
+
+# name: more erlang
+# shell: rpm -Uvh /tmp/erlang-solutions-1.0-1.noarch.rpm
+- name: mount dir
+  shell:  mount -o remount,exec /tmp
 
 - name: import elasticsearch key
   rpm_key:
@@ -41,6 +51,11 @@
   command: yum clean all
   args:
     warn: no
+
+#- name: update
+ # yum: 
+  #  name: "*"
+   # state: latest
 
 - name: install gcc
   yum:
@@ -108,15 +123,21 @@
     name:
       - elasticsearch
 
-- name: install erlang
-  yum:
-    state: present
-    name:
-      - erlang
+#- name: install erlang
+  #yum:
+    #state: latest
+    #name:
+     # - erlang
+
+#- name: install esl
+ # yum:
+  #  state: latest
+   # name:
+    #  - esl-erlang
 
 - name: install rabbitmq-server
   yum:
-    state: present
+    state: latest 
     name:
       - rabbitmq-server
 
