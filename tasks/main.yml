@@ -344,10 +344,10 @@
     line: xpack.watcher.enabled: true
     
  #can be any key bigger than 31 character
- - name: turn on alerting kibana
-   lineinfile:
-     path: /etc/kibana/kibana.yml
-     line: xpack.encryptedSavedObjects.encryptionKey: qwertyuiopasdfghjklzxcvbnmqwertyui
+- name: turn on alerting kibana
+  lineinfile:
+    path: /etc/kibana/kibana.yml
+    line: xpack.encryptedSavedObjects.encryptionKey: qwertyuiopasdfghjklzxcvbnmqwertyui
     
 - name: reload elasticsearch
   systemd:
