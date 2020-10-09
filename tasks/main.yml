@@ -26,10 +26,14 @@
     name:  https://github.com/rabbitmq/erlang-rpm/releases/download/v22.3.4.2/erlang-22.3.4.2-1.el7.x86_64.rpm 
     state: present
 
-# name: more erlang
-# shell: rpm -Uvh /tmp/erlang-solutions-1.0-1.noarch.rpm
-- name: mount dir
-  shell:  mount -o remount,exec /tmp
+# - name: mount dir
+#   shell:  mount -o remount,exec /tmp
+  
+- name: Remount a mounted volume and append exec to the existing options
+  ansible.posix.mount:
+    path: /tmp
+    state: remounted
+    opts: exec
 
 - name: import elasticsearch key
   rpm_key:
@@ -51,11 +55,6 @@
   command: yum clean all
   args:
     warn: no
-
-#- name: update
- # yum: 
-  #  name: "*"
-   # state: latest
 
 - name: install gcc
   yum:
@@ -123,18 +122,6 @@
     name:
       - elasticsearch
 
-#- name: install erlang
-  #yum:
-    #state: latest
-    #name:
-     # - erlang
-
-#- name: install esl
- # yum:
-  #  state: latest
-   # name:
-    #  - esl-erlang
-
 - name: install rabbitmq-server
   yum:
     state: latest 
@@ -171,24 +158,24 @@
     url: https://raw.githubusercontent.com/perfsonar/archiving-sandbox/master/toolkit/files/java.sh
     dest: /etc/profile.d/java.sh
 
-- name: execute script
-  shell: source /etc/profile.d/java.sh
+# - name: execute script
+#   shell: source /etc/profile.d/java.sh
+  
+- name: Run a script
+  script: /etc/profile.d/java.sh
+  args:
+    executable: source
+
 
 - name: java 11 setup
   shell: "JAVA_HOME=/usr/lib/jvm/jre-11 yum install -y logstash"
 
-#- name: copying
- # copy:
-  #  content: "JAVA_HOME=/usr/share/elasticsearch/jdk"
-   # dest: /etc/sysconfig/logstash
 
-#- name: copying
-#  lineinfile:
-#    line: JAVA_HOME=/usr/share/elasticsearch/jdk
-#    path: /etc/sysconfig/logstash
+- name: Assigning logstash JAVA_HOME
+  lineinfile:
+    path: /etc/sysconfig/logstash
+    line: 'JAVA_HOME=/usr/share/elasticsearch/jdk'
 
-- name: copying 
-  shell: "echo \"JAVA+HOME=/usr/share/elasticsearch/jdk\" >> /etc/sysconfig/logstash"
 
 - name: reload daemon
   systemd:
@@ -205,6 +192,17 @@
     names: rabbitmq_management
     state: enabled
 
+- name: add user
+  rabbitmq_user:
+    user: elastic
+    password: elastic
+    vhost: /
+    configure_priv: .*
+    read_priv: .*
+    write_priv: .*
+    state: present
+    
+    
 - name: enable elastic
   systemd:
     enabled: yes
@@ -223,32 +221,22 @@
     dest: /usr/lib/perfsonar/scripts/pselastic_secure.sh
     mode: 0755
 
-- name: copy andys stuff
+- name: copy andys pselastic_setup
   copy:
     src: pselastic_setup
     dest: /usr/lib/
     mode: 0755
 
 - name: run secure script
-  shell: /usr/lib/perfsonar/scripts/pselastic_secure.sh
+  script: /usr/lib/perfsonar/scripts/pselastic_secure.sh
 
-- name: add user
-  rabbitmq_user:
-    user: elastic
-    password: elastic
-    vhost: /
-    configure_priv: .*
-    read_priv: .*
-    write_priv: .*
-    state: present
-
-- name: copy logstash
+- name: copy logstash pipeline config
   copy:
     src: logstash_pipeline/
     dest: /etc/logstash/conf.d/
     force: yes
 
-- name: more logstash
+- name: copy logstash output config
   get_url:
     url: https://raw.githubusercontent.com/perfsonar/archiving-sandbox/master/toolkit/files/99-outputs.conf
     dest: /etc/logstash/conf.d/
@@ -326,28 +314,28 @@
 - name: turn on alerting elastic
   lineinfile: 
     path: /etc/elasticsearch/elasticsearch.yml
-    line: xpack.security.enabled: false
+    line: 'xpack.security.enabled: false'
 
 - name: turn on alerting elastic
   lineinfile:
     path: /etc/elasticsearch/elasticsearch.yml
-    line: xpack.watcher.enabled: true
+    line: 'xpack.watcher.enabled: true'
 
 - name: turn on alerting kibana
   lineinfile:
     path: /etc/kibana/kibana.yml
-    line: xpack.security.enabled: false
+    line: 'xpack.security.enabled: false'
     
 - name: turn on alerting kibana
   lineinfile:
     path: /etc/kibana/kibana.yml
-    line: xpack.watcher.enabled: true
+    line: 'xpack.watcher.enabled: true'
     
  #can be any key bigger than 31 character
 - name: turn on alerting kibana
   lineinfile:
     path: /etc/kibana/kibana.yml
-    line: xpack.encryptedSavedObjects.encryptionKey: qwertyuiopasdfghjklzxcvbnmqwertyui
+    line: 'xpack.encryptedSavedObjects.encryptionKey: qwertyuiopasdfghjklzxcvbnmqwertyui'
     
 - name: reload elasticsearch
   systemd:
