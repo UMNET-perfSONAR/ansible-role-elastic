@@ -242,11 +242,33 @@
     dest: /etc/logstash/conf.d/
     force: yes
 
+- name: copy pssid logstash input-output config
+  get_url:
+    url: https://raw.githubusercontent.com/UMNET-perfSONAR/pSSID/master/logstash_conf/pssid_conf.d/pssid-input-output.conf
+    dest: /etc/logstash/pssid_conf.d/
+    force: yes
+
+- name: copy pssid scan and ssid bad coverage filter
+  get_url:
+    url: https://raw.githubusercontent.com/UMNET-perfSONAR/pSSID/master/logstash_conf/pssid_conf.d/01-pssid-scan-filter.conf
+    dest: /etc/logstash/pssid_conf.d/
+    force: yes
+
 - name: create a link
   file:
     src: /etc/logstash/conf.d
     dest: /usr/share/logstash/pipeline
     state: link
+ 
+- name: Create second pipeline for pssid
+  lineinfile:
+    path: /etc/logstash/pipelines.yml
+    line: '- pipeline.id: second'
+    
+- name: Create second pipeline for pssid
+  lineinfile:
+    path: /etc/logstash/pipelines.yml
+    line: 'path.config: "/etc/logstash/pssid_conf.d/*.conf"'
 
 - name: enable logstash
   systemd:
