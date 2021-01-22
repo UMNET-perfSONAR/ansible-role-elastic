@@ -28,12 +28,6 @@
 
 # - name: mount dir
 #   shell:  mount -o remount,exec /tmp
-  
-- name: Remount a mounted volume and append exec to the existing options
-  ansible.posix.mount:
-    path: /tmp
-    state: remounted
-    opts: exec
 
 - name: import elasticsearch key
   rpm_key:
@@ -158,24 +152,15 @@
     url: https://raw.githubusercontent.com/perfsonar/archiving-sandbox/master/toolkit/files/java.sh
     dest: /etc/profile.d/java.sh
 
-# - name: execute script
-#   shell: source /etc/profile.d/java.sh
-  
-- name: Run a script
-  script: /etc/profile.d/java.sh
-  args:
-    executable: source
-
+- name: execute script
+  shell: source /etc/profile.d/java.sh
 
 - name: java 11 setup
   shell: "JAVA_HOME=/usr/lib/jvm/jre-11 yum install -y logstash"
 
 
-- name: Assigning logstash JAVA_HOME
-  lineinfile:
-    path: /etc/sysconfig/logstash
-    line: 'JAVA_HOME=/usr/share/elasticsearch/jdk'
-
+- name: copying 
+  shell: "echo \"JAVA+HOME=/usr/share/elasticsearch/jdk\" >> /etc/sysconfig/logstash"
 
 - name: reload daemon
   systemd:
